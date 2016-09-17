@@ -34,7 +34,6 @@ class CpanelViewCpanel extends JViewLegacy
 	{
 		// Set toolbar items for the page
 		JToolbarHelper::title(JText::_('COM_CPANEL'), 'home-2 cpanel');
-		JToolbarHelper::help('screen.cpanel');
 
 		$input = JFactory::getApplication()->input;
 
@@ -46,12 +45,6 @@ class CpanelViewCpanel extends JViewLegacy
 
 		// Display the cpanel modules
 		$this->modules = JModuleHelper::getModules('cpanel');
-
-		// Load the RAD layer and count the number of post-installation messages
-		if (!defined('FOF_INCLUDED'))
-		{
-			require_once JPATH_LIBRARIES . '/fof/include.php';
-		}
 
 		try
 		{
