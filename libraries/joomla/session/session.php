@@ -766,41 +766,20 @@ class JSession implements IteratorAggregate
 			return false;
 		}
 
-		// Keep the old value
-		$value = $_SESSION();
-
-		$trans = ini_get('session.use_trans_sid');
-        if( $trans ) 
-        {
-            ini_set( 'session.use_trans_sid', 0 );
-        }
-        $cookie	= session_get_cookie_params();
-
-		// Generate a new ID
-        session_regenerate_id(true);
-        $id = session_id();
-
-		$data = $this->_store->read($this->getId());
-		// Kill the session
-        session_destroy();
+		// Keep session config
+		$cookie = session_get_cookie_params();
 
 		// Re-register the session store after a session has been destroyed, to avoid PHP bug
-        $this->_store->register();
+		$this->_store->register();
 
-        // Restore config
-        ini_set( 'session.use_trans_sid', $trans);
-        session_set_cookie_params( $cookie['lifetime'], $cookie['path'], $cookie['domain'], $cookie['secure']);
+		// Restore config
+		session_set_cookie_params($cookie['lifetime'], $cookie['path'], $cookie['domain'], $cookie['secure'], true);
 
-        // Restart session with new id
-        session_id($id);
-        session_start();
+		// Restart session with new id
+		$this->_handler->regenerate(true, null);
+		$this->_handler->start();
 
-        $_SESSION = $values;
-
-        // Now put the session data back
-        $this->_store->write($id, $data);
-
-        return true;
+		return true;
 	}
 
 	/**
