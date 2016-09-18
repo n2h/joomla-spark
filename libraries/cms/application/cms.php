@@ -812,6 +812,14 @@ class JApplicationCms extends JApplicationWeb
 
 		if ($response->status === JAuthentication::STATUS_SUCCESS)
 		{
+			$session = JFactory::getSession($options);
+            // Fork the session to prevent session fixation issues if it's already active
+            if($session->getState() != 'active') {
+                $session->start();
+            } else {
+                $session->fork();
+            }
+
 			/*
 			 * Validate that the user should be able to login (different to being authenticated).
 			 * This permits authentication plugins blocking the user.
